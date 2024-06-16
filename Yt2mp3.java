@@ -1,3 +1,5 @@
+import java.net.URI;
+
 class Yt2mp3{
 
 	public Yt2mp3(String link){
@@ -8,10 +10,15 @@ class Yt2mp3{
 
 	private void validateLink(String inputLink){
 		String pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+";
-		if(!inputLink.isEmpty() && inputLink.matches(pattern)){
-			System.out.println("Link is valid");
-		}else{
-			System.out.println("not a youtube link with valid format.");
+		if(inputLink.isEmpty() || !inputLink.matches(pattern)){
+			System.err.println("Error: must be Youtube link with valid format.");
+			System.exit(0);
+		}
+		try {
+			new URI(inputLink).toURL();
+			System.out.println("valid link");
+		}catch (Exception e){
+			System.err.println("Not a valid youtube link.");
 		}
 	}
 
