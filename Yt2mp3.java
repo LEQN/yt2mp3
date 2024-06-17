@@ -1,4 +1,9 @@
 import java.net.URI;
+import java.lang.ProcessBuilder;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 class Yt2mp3{
 
@@ -6,6 +11,7 @@ class Yt2mp3{
 		System.out.println("Validating link...");
 		validateLink(link);
 		System.out.println("Converting youtube link: "+ link);
+		runYTDLP(link);
 	}
 
 	private void validateLink(String inputLink){
@@ -21,6 +27,33 @@ class Yt2mp3{
 			System.err.println("Not a valid youtube link.");
 		}
 	}
+
+	private void runYTDLP(String link){
+		try{
+			String[] commands = {"yt-dlp", link};
+			ProcessBuilder pb = new ProcessBuilder(commands);
+			Process process = pb.start();
+			//read input
+			InputStream is = process.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line;
+			while((line = br.readLine())!= null){
+				System.out.println(line);
+			}
+
+			try {
+				//process terminate
+				process.waitFor();
+			} catch (InterruptedException e) {
+			    e.printStackTrace();
+			}
+
+		}catch (IOException e){
+			e.printStackTrace();
+		}
+	}
+	
 
 	public static void main(String[] args){
 		if(args.length < 1){
