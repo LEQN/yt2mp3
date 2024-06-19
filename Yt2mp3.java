@@ -8,13 +8,12 @@ import java.io.IOException;
 class Yt2mp3{
 
 	public Yt2mp3(String link){
-		System.out.println("Validating link...");
 		validateLink(link);
-		System.out.println("Converting youtube link: "+ link);
 		runYTDLP(link);
 	}
 
 	private void validateLink(String inputLink){
+		System.out.println("Validating link...");
 		String pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+";
 		if(inputLink.isEmpty() || !inputLink.matches(pattern)){
 			System.err.println("Error: must be Youtube link with valid format.");
@@ -22,7 +21,6 @@ class Yt2mp3{
 		}
 		try {
 			new URI(inputLink).toURL();
-			System.out.println("valid link");
 		}catch (Exception e){
 			System.err.println("Not a valid youtube link.");
 		}
@@ -30,16 +28,18 @@ class Yt2mp3{
 
 	private void runYTDLP(String link){
 		try{
-			String[] commands = {"yt-dlp", link};
+			String[] commands = {"yt-dlp","--extract-audio", "--audio-quality", "0", "-o", "%(title)s.%(ext)s", link};
 			ProcessBuilder pb = new ProcessBuilder(commands);
 			Process process = pb.start();
 			//read input
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
+			System.out.println("Extracting audio...");
 			String line;
 			while((line = br.readLine())!= null){
-				System.out.println(line);
+				//System.out.println(line);
+				downloadProgress(line);
 			}
 
 			try {
@@ -51,6 +51,17 @@ class Yt2mp3{
 
 		}catch (IOException e){
 			e.printStackTrace();
+		}
+	}
+
+	private void downloadProgress(String line){
+		if(line.length() <= 1){
+			return;
+		}
+		int i = line.indexOf(' ');
+		String firstWord = line.substring(0, i);
+		if(firstWord.equals("[download]")){
+			System.out.println(line);
 		}
 	}
 	
