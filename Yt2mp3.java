@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.*;
 
 class Yt2mp3{
 
@@ -12,6 +15,7 @@ class Yt2mp3{
 	public Yt2mp3(String link){
 		validateLink(link);
 		runYTDLP(link);
+		convertToMP3();
 	}
 
 	private void validateLink(String inputLink){
@@ -71,6 +75,31 @@ class Yt2mp3{
 	private void getTitle(String line){
 		int i = line.indexOf('/');
 		filename = line.substring(i);
+	}
+
+	private void convertToMP3(){
+		System.out.println("Converting to mp3...");
+		try {
+			String audioPath = "output/"+filename;
+			String outputFile = "output/"+filename+".mp3";
+			String[] ffmpegCommand = {"ffmpeg", "-i", audioPath, outputFile};
+			ProcessBuilder pb = new ProcessBuilder(ffmpegCommand);
+			Process convertProcess = pb.start();
+			try {
+				//process terminate
+				convertProcess.waitFor();
+				System.out.println("Finished! audio in output folder.");
+			} catch (InterruptedException e) {
+			    e.printStackTrace();
+			}
+			try{
+				convertProcess.waitFor();
+			}catch(InterruptedException e){
+				e.printStackTrace();
+			}
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args){
