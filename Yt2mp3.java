@@ -7,6 +7,8 @@ import java.io.IOException;
 
 class Yt2mp3{
 
+	private String filename;
+
 	public Yt2mp3(String link){
 		validateLink(link);
 		runYTDLP(link);
@@ -28,7 +30,7 @@ class Yt2mp3{
 
 	private void runYTDLP(String link){
 		try{
-			String[] commands = {"yt-dlp","--extract-audio", "--audio-quality", "0", "-o", "%(title)s.%(ext)s", link};
+			String[] commands = {"yt-dlp","--extract-audio", "--audio-quality", "0", "-o", "output/%(title)s.%(ext)s", link};
 			ProcessBuilder pb = new ProcessBuilder(commands);
 			Process process = pb.start();
 			//read input
@@ -38,7 +40,6 @@ class Yt2mp3{
 			System.out.println("Extracting audio...");
 			String line;
 			while((line = br.readLine())!= null){
-				//System.out.println(line);
 				downloadProgress(line);
 			}
 
@@ -62,9 +63,15 @@ class Yt2mp3{
 		String firstWord = line.substring(0, i);
 		if(firstWord.equals("[download]")){
 			System.out.println(line);
+		}else if(firstWord.equals("[ExtractAudio]")){
+			getTitle(line);
 		}
 	}
-	
+
+	private void getTitle(String line){
+		int i = line.indexOf('/');
+		filename = line.substring(i);
+	}
 
 	public static void main(String[] args){
 		if(args.length < 1){
