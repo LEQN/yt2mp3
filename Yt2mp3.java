@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.*;
 
 class Yt2mp3{
 
@@ -94,12 +96,31 @@ class Yt2mp3{
 				//process terminate
 				convertProcess.waitFor();
 				System.out.println("Finished! audio in output folder.");
+				DeleteOGAudioFile(pb);
 			} catch (InterruptedException e) {
 			    e.printStackTrace();
 			}
 			try{
 				convertProcess.waitFor();
 			}catch(InterruptedException e){
+				e.printStackTrace();
+			}
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+	}
+
+	private void DeleteOGAudioFile(ProcessBuilder pb){
+		try{
+			List<String> command = new ArrayList<>();
+			command.add("rm");
+			command.add("output/"+filename);
+			pb.command(command);
+			Process deleteProcess = pb.start();
+			try {
+				deleteProcess.waitFor();
+				System.out.println("deleted og");
+			}catch (InterruptedException e){
 				e.printStackTrace();
 			}
 		}catch(IOException e){
