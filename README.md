@@ -10,7 +10,7 @@ The project utilizes the `yt-dlp` program to download the audio and `ffmpeg` for
 
 ## Usage
 1. Clone this repository:
-   ```sh
+   ```
    git clone https://github.com/LEQN/yt2mp3.git
    cd ytmp3
    ```
@@ -25,7 +25,9 @@ The project utilizes the `yt-dlp` program to download the audio and `ffmpeg` for
 The downloaded mp3 file will be in the `output` folder, which will be created by the program.
 
 ### Example
+```
 java Yt2mp3 https://www.youtube.com/watch?v=dQw4w9WgXcQ
+```
 
 output:
 ```
