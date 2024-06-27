@@ -32,11 +32,7 @@ class Yt2mp3{
 
 	private void runYTDLP(String link){
 		System.out.println("Extracting audio...");
-		List<String> command = new ArrayList<>();
-		command.add("yt-dlp"); command.add("--extract-audio"); command.add("--audio-quality");
-		command.add("0"); command.add("-o");
-		command.add("output/%(title)s.%(ext)s");
-		command.add(link);
+		List<String> command = new ArrayList<>(Arrays.asList("yt-dlp", "--extract-audio", "--audio-quality", "0", "-o", "output/%(title)s.%(ext)s", link));
 		runProcesses(command, "download");
 		convertToMP3();
 	}
@@ -71,17 +67,13 @@ class Yt2mp3{
 		System.out.println("Converting to mp3...");
 		String audioPath = "output/"+filename;
 		String outputFile = "output/"+audioTitle()+".mp3";
-		List<String> command = new ArrayList<>();
-		command.add("ffmpeg"); command.add("-i");
-		command.add(audioPath); command.add(outputFile);
+		List<String> command = new ArrayList<>(Arrays.asList("ffmpeg", "-i", audioPath, outputFile));
 		runProcesses(command, "convert");
 		DeleteOGAudioFile();
 	}
 
 	private void DeleteOGAudioFile(){
-		List<String> command = new ArrayList<>();
-		command.add("rm");
-		command.add("output/"+filename);
+		List<String> command = new ArrayList<>(Arrays.asList("rm", "output/"+filename));
 		runProcesses(command, "delete");
 		System.out.println("Finished! audio in output folder.");
 	}
