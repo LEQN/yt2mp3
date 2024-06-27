@@ -14,7 +14,6 @@ class Yt2mp3{
 	public Yt2mp3(String link){
 		validateLink(link);
 		runYTDLP(link);
-		convertToMP3();
 	}
 
 	private void validateLink(String inputLink){
@@ -32,30 +31,14 @@ class Yt2mp3{
 	}
 
 	private void runYTDLP(String link){
-		try{
-			String[] commands = {"yt-dlp","--extract-audio", "--audio-quality", "0", "-o", "output/%(title)s.%(ext)s", link};
-			ProcessBuilder pb = new ProcessBuilder(commands);
-			Process process = pb.start();
-			//read input
-			InputStream is = process.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			System.out.println("Extracting audio...");
-			String line;
-			while((line = br.readLine())!= null){
-				downloadProgress(line);
-			}
-
-			try {
-				//process terminate
-				process.waitFor();
-			} catch (InterruptedException e) {
-			    e.printStackTrace();
-			}
-
-		}catch (IOException e){
-			e.printStackTrace();
-		}
+		System.out.println("Extracting audio...");
+		List<String> command = new ArrayList<>();
+		command.add("yt-dlp"); command.add("--extract-audio"); command.add("--audio-quality");
+		command.add("0"); command.add("-o");
+		command.add("output/%(title)s.%(ext)s");
+		command.add(link);
+		runProcesses(command, "download");
+		convertToMP3();
 	}
 
 	private void downloadProgress(String line){
@@ -86,41 +69,40 @@ class Yt2mp3{
 
 	private void convertToMP3(){
 		System.out.println("Converting to mp3...");
-		try {
-			String audioPath = "output/"+filename;
-			String outputFile = "output/"+audioTitle()+".mp3";
-			String[] ffmpegCommand = {"ffmpeg", "-i", audioPath, outputFile};
-			ProcessBuilder pb = new ProcessBuilder(ffmpegCommand);
-			Process convertProcess = pb.start();
-			try {
-				//process terminate
-				convertProcess.waitFor();
-				System.out.println("Finished! audio in output folder.");
-				DeleteOGAudioFile(pb);
-			} catch (InterruptedException e) {
-			    e.printStackTrace();
-			}
-			try{
-				convertProcess.waitFor();
-			}catch(InterruptedException e){
-				e.printStackTrace();
-			}
-		}catch(IOException e){
-			e.printStackTrace();
-		}
+		String audioPath = "output/"+filename;
+		String outputFile = "output/"+audioTitle()+".mp3";
+		List<String> command = new ArrayList<>();
+		command.add("ffmpeg"); command.add("-i");
+		command.add(audioPath); command.add(outputFile);
+		runProcesses(command, "convert");
+		DeleteOGAudioFile();
 	}
 
-	private void DeleteOGAudioFile(ProcessBuilder pb){
-		try{
-			List<String> command = new ArrayList<>();
-			command.add("rm");
-			command.add("output/"+filename);
-			pb.command(command);
-			Process deleteProcess = pb.start();
-			try {
-				deleteProcess.waitFor();
-				System.out.println("deleted og");
-			}catch (InterruptedException e){
+	private void DeleteOGAudioFile(){
+		List<String> command = new ArrayList<>();
+		command.add("rm");
+		command.add("output/"+filename);
+		runProcesses(command, "delete");
+		System.out.println("Finished! audio in output folder.");
+	}
+
+	private void runProcesses(List<String> commands, String action){
+		try {
+			ProcessBuilder pb = new ProcessBuilder(commands);
+			Process process = pb.start();
+
+			if(action.equals("download")){
+				InputStream is = process.getInputStream();
+				InputStreamReader isr = new InputStreamReader(is);
+				BufferedReader br = new BufferedReader(isr);
+				String line;
+				while((line=br.readLine())!= null){
+					downloadProgress(line);
+				}	
+			}
+			try{
+				process.waitFor();
+			}catch(InterruptedException e){
 				e.printStackTrace();
 			}
 		}catch(IOException e){
