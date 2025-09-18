@@ -60,6 +60,7 @@ class Yt2mp3{
 		if(filename != null && filename.contains(".")){
 			title = filename.substring(0, filename.lastIndexOf('.'));
 		}
+		System.out.println(title);
 		return title;
 	}
 
