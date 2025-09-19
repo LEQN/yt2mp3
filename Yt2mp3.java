@@ -10,13 +10,17 @@ import java.util.*;
 class Yt2mp3{
 
 	private String filename;
-	private String link;
 
 	public Yt2mp3(){
-		//validateLink(link);
-		//runYTDLP(link);
-		this.link = "";
-		this.filename = "";
+	}
+
+	private String inputSingleLink(){
+		System.out.println("------------------------------------:");
+		System.out.println("Enter the link for the youtube video:");
+		System.out.println("------------------------------------:");
+		Scanner scanner = new Scanner(System.in);
+		String input = scanner.next();
+		return input;
 	}
 
 	private void validateLink(String inputLink){
@@ -112,13 +116,12 @@ class Yt2mp3{
 		Yt2mp3 obj = new Yt2mp3();
 		//after getting the option of menu
 		//input for the actual link needs to be received (not via args)
-		//validate links method needs to be run here after the menu not in constructor
 		switch(menuOption){
 			case 1:
-				//run single link
+				String downloadLink = obj.inputSingleLink();
+				System.out.println(downloadLink);
 				//validateLink(link);
-				////runYTDLP(link);
-				System.out.println(menuOption);
+				//runYTDLP(link);
 				break;
 			case 2:
 				//run multi links (create method for reading in multiple links)
