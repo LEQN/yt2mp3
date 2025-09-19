@@ -10,10 +10,13 @@ import java.util.*;
 class Yt2mp3{
 
 	private String filename;
+	private String link;
 
-	public Yt2mp3(String link){
-		validateLink(link);
-		runYTDLP(link);
+	public Yt2mp3(){
+		//validateLink(link);
+		//runYTDLP(link);
+		this.link = "";
+		this.filename = "";
 	}
 
 	private void validateLink(String inputLink){
@@ -104,11 +107,29 @@ class Yt2mp3{
 	}
 
 	public static void main(String[] args){
-		if(args.length < 1){
-			System.err.println("No input provided.");
-			System.exit(0);
-		}
-		String inputLink = args[0];
-		Yt2mp3 obj = new Yt2mp3(inputLink);
+		Menu menu = new Menu();
+		int menuOption = menu.startMenu();
+		Yt2mp3 obj = new Yt2mp3();
+		//after getting the option of menu
+		//input for the actual link needs to be received (not via args)
+		//validate links method needs to be run here after the menu not in constructor
+		switch(menuOption){
+			case 1:
+				//run single link
+				//validateLink(link);
+				////runYTDLP(link);
+				System.out.println(menuOption);
+				break;
+			case 2:
+				//run multi links (create method for reading in multiple links)
+				System.out.println(menuOption);
+				break;
+			case 3:
+				//run the download history check
+				System.out.println(menuOption);
+				break;
+			default:
+				System.exit(0);
+		}		
 	}
 }
