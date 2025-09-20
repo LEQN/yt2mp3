@@ -12,6 +12,7 @@ class Yt2mp3{
 	private String filename;
 
 	public Yt2mp3(){
+		this.filename = "";
 	}
 
 	private String inputSingleLink(){
@@ -21,6 +22,28 @@ class Yt2mp3{
 		Scanner scanner = new Scanner(System.in);
 		String input = scanner.next();
 		return input;
+	}
+
+	private ArrayList<String> inputMultipleLinks(){
+		ArrayList<String> inputLinks = new ArrayList<>();
+		System.out.println("--------------------------------------:");
+		System.out.println("Enter the links for each youtube video:");
+		System.out.println("--------------------------------------:");
+		Scanner scanner = new Scanner(System.in);
+		while(scanner.hasNextLine()){
+			String line = scanner.nextLine();
+
+			if(line == null || line == ""){
+			System.out.println("END OF INPUT...");
+			break;
+		       	}
+			String[] tokens = line.split("\\s+");
+			for(String token : tokens){
+				inputLinks.add(token);
+			}
+		}
+
+		return inputLinks;
 	}
 
 	private void validateLink(String inputLink){
@@ -114,18 +137,21 @@ class Yt2mp3{
 		Menu menu = new Menu();
 		int menuOption = menu.startMenu();
 		Yt2mp3 obj = new Yt2mp3();
-		//after getting the option of menu
-		//input for the actual link needs to be received (not via args)
+
+		//add check for playlist links - all links will be donwloaded if single link option in menu is selected, But only the last file will get converted to an mp3 as filename will be set to last download.
 		switch(menuOption){
 			case 1:
 				String downloadLink = obj.inputSingleLink();
-				System.out.println(downloadLink);
-				//validateLink(link);
-				//runYTDLP(link);
+				obj.validateLink(downloadLink);
+				obj.runYTDLP(downloadLink);
 				break;
 			case 2:
-				//run multi links (create method for reading in multiple links)
-				System.out.println(menuOption);
+				List<String> links = obj.inputMultipleLinks();
+				for(String link : links){ 
+					System.out.println(link);
+					//validate link
+					//run download on link
+				}
 				break;
 			case 3:
 				//run the download history check
